@@ -168,7 +168,7 @@ export const mockStrategies: Strategy[] = [
       'Confirm pattern completion before entry',
       'Enter on breakout of pattern boundary',
       'Place stop loss at logical level based on pattern',
-      'Take profit based on pattern's measured move'
+      'Take profit based on pattern\'s measured move'
     ],
     entryConditions: [
       'Pattern fully forms and confirms',
