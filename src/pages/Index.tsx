@@ -85,32 +85,32 @@ const Dashboard = () => {
                 <TabsTrigger value="open">Open</TabsTrigger>
                 <TabsTrigger value="closed">Closed</TabsTrigger>
               </TabsList>
+            
+              <TabsContent value="recent" className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recentTrades.map((trade) => (
+                    <TradeCard key={trade.id} trade={trade} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="open" className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {mockTrades.filter(t => t.status === 'open').map((trade) => (
+                    <TradeCard key={trade.id} trade={trade} />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="closed" className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {mockTrades.filter(t => t.status !== 'open').map((trade) => (
+                    <TradeCard key={trade.id} trade={trade} />
+                  ))}
+                </div>
+              </TabsContent>
             </Tabs>
           </div>
-          
-          <TabsContent value="recent" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recentTrades.map((trade) => (
-                <TradeCard key={trade.id} trade={trade} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="open" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {mockTrades.filter(t => t.status === 'open').map((trade) => (
-                <TradeCard key={trade.id} trade={trade} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="closed" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {mockTrades.filter(t => t.status !== 'open').map((trade) => (
-                <TradeCard key={trade.id} trade={trade} />
-              ))}
-            </div>
-          </TabsContent>
         </div>
       </main>
     </div>
