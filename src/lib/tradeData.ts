@@ -260,3 +260,5 @@ export const mockMarketPerformance: MarketPerformance[] = [
   { market: 'Crypto', totalTrades: 18, winRate: 65.3, avgPnL: 2.2 },
   { market: 'Commodities', totalTrades: 7, winRate: 59.4, avgPnL: 1.5 }
 ];
+
+export const mockStrategies = defaultStrategies;
