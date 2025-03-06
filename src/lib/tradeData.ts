@@ -119,160 +119,221 @@ export const saveStrategies = (strategies: Strategy[]): void => {
   storeData('strategies', strategies);
 };
 
-export const mockTrades: Trade[] = [
-  {
-    id: '1',
-    symbol: 'AAPL',
-    direction: 'long',
-    entryPrice: 170.25,
-    exitPrice: 175.50,
-    stopLoss: 168.00,
-    takeProfit: 178.00,
-    quantity: 10,
-    entryDate: '2023-10-15T09:30:00Z',
-    exitDate: '2023-10-15T14:30:00Z',
-    status: 'win',
-    pnl: 52.5,
-    pnlPercentage: 3.08,
-    notes: 'Bought after positive earnings. Clean breakout above resistance.',
-    tags: ['breakout', 'earnings'],
-    strategy: 'Breakout Strategy',
-    setupImage: 'https://i.imgur.com/GcbCr1r.png',
-    chartTimeframe: '1h'
-  },
-  {
-    id: '2',
-    symbol: 'MSFT',
-    direction: 'long',
-    entryPrice: 330.75,
-    exitPrice: 325.10,
-    stopLoss: 325.00,
-    takeProfit: 340.00,
-    quantity: 5,
-    entryDate: '2023-10-18T10:15:00Z',
-    exitDate: '2023-10-18T15:45:00Z',
-    status: 'loss',
-    pnl: -28.25,
-    pnlPercentage: -1.71,
-    notes: 'Failed breakout attempt. Market sentiment shifted during the day.',
-    tags: ['breakout', 'failed'],
-    strategy: 'Breakout Strategy',
-    setupImage: 'https://i.imgur.com/RJgzpzD.png',
-    chartTimeframe: '1d'
-  },
-  {
-    id: '3',
-    symbol: 'TSLA',
-    direction: 'short',
-    entryPrice: 242.50,
-    stopLoss: 248.00,
-    takeProfit: 230.00,
-    quantity: 8,
-    entryDate: '2023-10-20T11:00:00Z',
-    status: 'open',
-    notes: 'Short at resistance after double top formation.',
-    tags: ['resistance', 'pattern'],
-    strategy: 'Technical Pattern',
-    setupImage: 'https://i.imgur.com/m6dk0Uz.png',
-    chartTimeframe: '4h'
-  },
-  {
-    id: '4',
-    symbol: 'AMZN',
-    direction: 'long',
-    entryPrice: 132.75,
-    exitPrice: 138.20,
-    stopLoss: 130.00,
-    takeProfit: 140.00,
-    quantity: 15,
-    entryDate: '2023-10-12T09:45:00Z',
-    exitDate: '2023-10-14T16:00:00Z',
-    status: 'win',
-    pnl: 81.75,
-    pnlPercentage: 4.11,
-    notes: 'Strong support bounce with high volume.',
-    tags: ['support', 'volume'],
-    strategy: 'Support Bounce',
-    setupImage: 'https://i.imgur.com/NXp4Y1c.png',
-    chartTimeframe: '1d'
-  },
-  {
-    id: '5',
-    symbol: 'META',
-    direction: 'short',
-    entryPrice: 318.25,
-    exitPrice: 312.50,
-    stopLoss: 322.00,
-    takeProfit: 310.00,
-    quantity: 10,
-    entryDate: '2023-10-17T13:30:00Z',
-    exitDate: '2023-10-17T15:45:00Z',
-    status: 'win',
-    pnl: 57.5,
-    pnlPercentage: 1.81,
-    notes: 'Short after bearish engulfing pattern at resistance.',
-    tags: ['pattern', 'resistance'],
-    strategy: 'Technical Pattern',
-    setupImage: 'https://i.imgur.com/YrGDXuO.png',
-    chartTimeframe: '2h'
-  }
-];
-
-export const mockDashboardStats: DashboardStats = {
-  totalTrades: 126,
-  winRate: 61.2,
-  profitFactor: 1.85,
-  avgWin: 2.3,
-  avgLoss: -1.2,
-  bestTrade: 8.7,
-  worstTrade: -3.5,
-  currentStreak: 3,
-  longestWinStreak: 7,
-  longestLossStreak: 4
+// Trades storage functions
+export const getStoredTrades = (): Trade[] => {
+  return retrieveData<Trade[]>('trades', []);
 };
 
-export const mockStrategyPerformance: StrategyPerformance[] = [
-  {
-    strategyId: '1',
-    strategyName: 'Breakout Strategy',
-    totalTrades: 58,
-    winRate: 62.1,
-    avgPnL: 1.85,
-    profitFactor: 1.9,
-    maxDrawdown: 8.2
-  },
-  {
-    strategyId: '2',
-    strategyName: 'Support Bounce',
-    totalTrades: 43,
-    winRate: 58.5,
-    avgPnL: 2.1,
-    profitFactor: 1.75,
-    maxDrawdown: 9.1
-  },
-  {
-    strategyId: '3',
-    strategyName: 'Technical Pattern',
-    totalTrades: 25,
-    winRate: 65.0,
-    avgPnL: 1.7,
-    profitFactor: 2.1,
-    maxDrawdown: 6.8
+export const saveTrade = (trade: Trade): void => {
+  const trades = getStoredTrades();
+  trades.push(trade);
+  storeData('trades', trades);
+};
+
+export const getDefaultTrades = (): Trade[] => {
+  return [
+    {
+      id: '1',
+      symbol: 'AAPL',
+      direction: 'long',
+      entryPrice: 170.25,
+      exitPrice: 175.50,
+      stopLoss: 168.00,
+      takeProfit: 178.00,
+      quantity: 10,
+      entryDate: '2023-10-15T09:30:00Z',
+      exitDate: '2023-10-15T14:30:00Z',
+      status: 'win',
+      pnl: 52.5,
+      pnlPercentage: 3.08,
+      notes: 'Bought after positive earnings. Clean breakout above resistance.',
+      tags: ['breakout', 'earnings'],
+      strategy: 'Breakout Strategy',
+      setupImage: 'https://i.imgur.com/GcbCr1r.png',
+      chartTimeframe: '1h'
+    },
+    {
+      id: '2',
+      symbol: 'MSFT',
+      direction: 'long',
+      entryPrice: 330.75,
+      exitPrice: 325.10,
+      stopLoss: 325.00,
+      takeProfit: 340.00,
+      quantity: 5,
+      entryDate: '2023-10-18T10:15:00Z',
+      exitDate: '2023-10-18T15:45:00Z',
+      status: 'loss',
+      pnl: -28.25,
+      pnlPercentage: -1.71,
+      notes: 'Failed breakout attempt. Market sentiment shifted during the day.',
+      tags: ['breakout', 'failed'],
+      strategy: 'Breakout Strategy',
+      setupImage: 'https://i.imgur.com/RJgzpzD.png',
+      chartTimeframe: '1d'
+    },
+    {
+      id: '3',
+      symbol: 'TSLA',
+      direction: 'short',
+      entryPrice: 242.50,
+      stopLoss: 248.00,
+      takeProfit: 230.00,
+      quantity: 8,
+      entryDate: '2023-10-20T11:00:00Z',
+      status: 'open',
+      notes: 'Short at resistance after double top formation.',
+      tags: ['resistance', 'pattern'],
+      strategy: 'Technical Pattern',
+      setupImage: 'https://i.imgur.com/m6dk0Uz.png',
+      chartTimeframe: '4h'
+    },
+    {
+      id: '4',
+      symbol: 'AMZN',
+      direction: 'long',
+      entryPrice: 132.75,
+      exitPrice: 138.20,
+      stopLoss: 130.00,
+      takeProfit: 140.00,
+      quantity: 15,
+      entryDate: '2023-10-12T09:45:00Z',
+      exitDate: '2023-10-14T16:00:00Z',
+      status: 'win',
+      pnl: 81.75,
+      pnlPercentage: 4.11,
+      notes: 'Strong support bounce with high volume.',
+      tags: ['support', 'volume'],
+      strategy: 'Support Bounce',
+      setupImage: 'https://i.imgur.com/NXp4Y1c.png',
+      chartTimeframe: '1d'
+    },
+    {
+      id: '5',
+      symbol: 'META',
+      direction: 'short',
+      entryPrice: 318.25,
+      exitPrice: 312.50,
+      stopLoss: 322.00,
+      takeProfit: 310.00,
+      quantity: 10,
+      entryDate: '2023-10-17T13:30:00Z',
+      exitDate: '2023-10-17T15:45:00Z',
+      status: 'win',
+      pnl: 57.5,
+      pnlPercentage: 1.81,
+      notes: 'Short after bearish engulfing pattern at resistance.',
+      tags: ['pattern', 'resistance'],
+      strategy: 'Technical Pattern',
+      setupImage: 'https://i.imgur.com/YrGDXuO.png',
+      chartTimeframe: '2h'
+    }
+  ];
+};
+
+// Calculate dashboard stats based on stored trades
+export const calculateDashboardStats = (trades: Trade[]): DashboardStats => {
+  if (trades.length === 0) {
+    return {
+      totalTrades: 0,
+      winRate: 0,
+      profitFactor: 0,
+      avgWin: 0,
+      avgLoss: 0,
+      bestTrade: 0,
+      worstTrade: 0,
+      currentStreak: 0,
+      longestWinStreak: 0,
+      longestLossStreak: 0
+    };
   }
-];
 
-export const mockTimeframePerformance: TimeframePerformance[] = [
-  { timeframe: '15m', totalTrades: 18, winRate: 55.5, avgPnL: 1.2 },
-  { timeframe: '1h', totalTrades: 32, winRate: 63.2, avgPnL: 1.8 },
-  { timeframe: '4h', totalTrades: 45, winRate: 62.8, avgPnL: 2.1 },
-  { timeframe: '1d', totalTrades: 31, winRate: 58.1, avgPnL: 1.9 }
-];
+  const closedTrades = trades.filter(trade => trade.status !== 'open');
+  
+  if (closedTrades.length === 0) {
+    return {
+      totalTrades: trades.length,
+      winRate: 0,
+      profitFactor: 0,
+      avgWin: 0,
+      avgLoss: 0,
+      bestTrade: 0,
+      worstTrade: 0,
+      currentStreak: 0,
+      longestWinStreak: 0,
+      longestLossStreak: 0
+    };
+  }
 
-export const mockMarketPerformance: MarketPerformance[] = [
-  { market: 'Stocks', totalTrades: 73, winRate: 61.8, avgPnL: 1.9 },
-  { market: 'Forex', totalTrades: 28, winRate: 58.2, avgPnL: 1.7 },
-  { market: 'Crypto', totalTrades: 18, winRate: 65.3, avgPnL: 2.2 },
-  { market: 'Commodities', totalTrades: 7, winRate: 59.4, avgPnL: 1.5 }
-];
+  const wins = closedTrades.filter(trade => trade.status === 'win');
+  const losses = closedTrades.filter(trade => trade.status === 'loss');
+  
+  // Calculate win rate
+  const winRate = closedTrades.length > 0 
+    ? (wins.length / closedTrades.length) * 100 
+    : 0;
+  
+  // Calculate average win and loss percentages
+  const avgWin = wins.length > 0 
+    ? wins.reduce((sum, trade) => sum + (trade.pnlPercentage || 0), 0) / wins.length 
+    : 0;
+  
+  const avgLoss = losses.length > 0 
+    ? losses.reduce((sum, trade) => sum + (trade.pnlPercentage || 0), 0) / losses.length 
+    : 0;
+  
+  // Find best and worst trades
+  const pnlPercentages = closedTrades
+    .map(trade => trade.pnlPercentage || 0)
+    .filter(pnl => !isNaN(pnl));
+  
+  const bestTrade = pnlPercentages.length > 0 ? Math.max(...pnlPercentages) : 0;
+  const worstTrade = pnlPercentages.length > 0 ? Math.min(...pnlPercentages) : 0;
+  
+  // Calculate profit factor (sum of wins / sum of losses)
+  const totalWins = wins.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
+  const totalLosses = Math.abs(losses.reduce((sum, trade) => sum + (trade.pnl || 0), 0));
+  const profitFactor = totalLosses > 0 ? totalWins / totalLosses : totalWins > 0 ? 999 : 0;
+  
+  // Calculate streaks
+  let currentStreak = 0;
+  let maxWinStreak = 0;
+  let maxLossStreak = 0;
+  let tempWinStreak = 0;
+  let tempLossStreak = 0;
+  
+  // Sort trades by date
+  const sortedTrades = [...closedTrades].sort((a, b) => 
+    new Date(a.exitDate || '').getTime() - new Date(b.exitDate || '').getTime()
+  );
+  
+  for (let i = 0; i < sortedTrades.length; i++) {
+    if (sortedTrades[i].status === 'win') {
+      tempWinStreak++;
+      tempLossStreak = 0;
+      currentStreak = tempWinStreak;
+    } else {
+      tempLossStreak++;
+      tempWinStreak = 0;
+      currentStreak = -tempLossStreak;
+    }
+    
+    maxWinStreak = Math.max(maxWinStreak, tempWinStreak);
+    maxLossStreak = Math.max(maxLossStreak, tempLossStreak);
+  }
+  
+  return {
+    totalTrades: trades.length,
+    winRate: parseFloat(winRate.toFixed(1)),
+    profitFactor: parseFloat(profitFactor.toFixed(2)),
+    avgWin: parseFloat(avgWin.toFixed(2)),
+    avgLoss: parseFloat(avgLoss.toFixed(2)),
+    bestTrade: parseFloat(bestTrade.toFixed(2)),
+    worstTrade: parseFloat(worstTrade.toFixed(2)),
+    currentStreak: currentStreak,
+    longestWinStreak: maxWinStreak,
+    longestLossStreak: maxLossStreak
+  };
+};
 
 export const mockStrategies = defaultStrategies;

@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { TradingViewChart } from "@/components/charts/TradingViewChart";
-import { mockStrategies } from "@/lib/tradeData";
+import { mockStrategies, saveTrade } from "@/lib/tradeData";
 import { Trade, TradeDirection, TradeStatus } from "@/lib/types";
 import { Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -70,7 +69,6 @@ export function TradeForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form fields
     if (!trade.symbol || !trade.entryPrice || !trade.strategy) {
       toast({
         title: "Error",
@@ -84,14 +82,36 @@ export function TradeForm() {
       calculatePnL();
     }
     
+    const completeTradeData: Trade = {
+      id: Date.now().toString(),
+      symbol: trade.symbol || '',
+      direction: trade.direction as TradeDirection || 'long',
+      entryPrice: trade.entryPrice || 0,
+      exitPrice: trade.exitPrice,
+      stopLoss: trade.stopLoss || 0,
+      takeProfit: trade.takeProfit || 0,
+      quantity: trade.quantity || 0,
+      entryDate: trade.entryDate || new Date().toISOString(),
+      exitDate: trade.exitDate,
+      status: trade.status as TradeStatus || 'open',
+      pnl: trade.pnl || 0,
+      pnlPercentage: trade.pnlPercentage || 0,
+      notes: trade.notes || '',
+      tags: trade.tags || [],
+      strategy: trade.strategy || '',
+      setupImage: trade.setupImage || '',
+      chartTimeframe: trade.chartTimeframe || '1d',
+    };
+    
+    saveTrade(completeTradeData);
+    
     toast({
       title: "Trade saved",
       description: `${trade.symbol} ${trade.direction} trade has been saved successfully.`,
     });
     
-    console.log("Submitted trade:", trade);
+    console.log("Submitted trade:", completeTradeData);
     
-    // Reset form
     setTrade(defaultTrade);
     setPreview(false);
   };
