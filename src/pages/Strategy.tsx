@@ -1,7 +1,4 @@
 
-import { Navbar } from "@/components/layout/Navbar";
-import { mockStrategies, mockStrategyPerformance } from "@/lib/tradeData";
-import { Strategy } from "@/lib/types";
 import { useState } from "react";
 import { 
   BarChart3, 
@@ -13,12 +10,67 @@ import {
   Target, 
   TrendingUp 
 } from "lucide-react";
+import { Navbar } from "@/components/layout/Navbar";
+import { mockStrategies, mockStrategyPerformance } from "@/lib/tradeData";
+import { Strategy } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { StrategyFormModal } from "@/components/strategy/StrategyFormModal";
+import { toast } from "@/components/ui/use-toast";
 
 const StrategyPage = () => {
+  const [strategies, setStrategies] = useState<Strategy[]>(mockStrategies);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(mockStrategies[0]);
+  const [isNewStrategyModalOpen, setIsNewStrategyModalOpen] = useState(false);
+  const [isEditStrategyModalOpen, setIsEditStrategyModalOpen] = useState(false);
+
+  // Handle creating a new strategy
+  const handleCreateStrategy = (newStrategyData: Partial<Strategy>) => {
+    const newStrategy: Strategy = {
+      id: `strategy-${Date.now()}`,
+      name: newStrategyData.name || "Untitled Strategy",
+      description: newStrategyData.description || "",
+      rules: newStrategyData.rules || [],
+      entryConditions: newStrategyData.entryConditions || [],
+      exitConditions: newStrategyData.exitConditions || [],
+      markets: newStrategyData.markets || [],
+      timeframes: newStrategyData.timeframes || [],
+      riskRewardRatio: newStrategyData.riskRewardRatio || 2,
+      winRate: 0, // Default for new strategies
+    };
+    
+    setStrategies((prev) => [...prev, newStrategy]);
+    setSelectedStrategy(newStrategy);
+    
+    toast({
+      title: "Strategy Created",
+      description: `"${newStrategy.name}" has been created successfully.`,
+    });
+  };
+  
+  // Handle updating an existing strategy
+  const handleUpdateStrategy = (updatedStrategyData: Partial<Strategy>) => {
+    if (!selectedStrategy) return;
+    
+    const updatedStrategy = {
+      ...selectedStrategy,
+      ...updatedStrategyData,
+    };
+    
+    setStrategies((prev) => 
+      prev.map((strategy) => 
+        strategy.id === selectedStrategy.id ? updatedStrategy : strategy
+      )
+    );
+    
+    setSelectedStrategy(updatedStrategy);
+    
+    toast({
+      title: "Strategy Updated",
+      description: `"${updatedStrategy.name}" has been updated successfully.`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,7 +85,7 @@ const StrategyPage = () => {
             </p>
           </div>
           
-          <Button>
+          <Button onClick={() => setIsNewStrategyModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Strategy
           </Button>
@@ -43,11 +95,11 @@ const StrategyPage = () => {
           <div className="glass-card p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
               <h2 className="font-semibold">Strategy List</h2>
-              <span className="text-xs text-muted-foreground">{mockStrategies.length} strategies</span>
+              <span className="text-xs text-muted-foreground">{strategies.length} strategies</span>
             </div>
             
             <div className="space-y-2">
-              {mockStrategies.map((strategy) => (
+              {strategies.map((strategy) => (
                 <div 
                   key={strategy.id}
                   onClick={() => setSelectedStrategy(strategy)}
@@ -88,7 +140,11 @@ const StrategyPage = () => {
                       <p className="text-muted-foreground">{selectedStrategy.description}</p>
                     </div>
                     
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setIsEditStrategyModalOpen(true)}
+                    >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
@@ -241,6 +297,23 @@ const StrategyPage = () => {
           </div>
         </div>
       </main>
+      
+      {/* New Strategy Modal */}
+      <StrategyFormModal
+        open={isNewStrategyModalOpen}
+        onOpenChange={setIsNewStrategyModalOpen}
+        onSave={handleCreateStrategy}
+      />
+      
+      {/* Edit Strategy Modal */}
+      {selectedStrategy && (
+        <StrategyFormModal
+          open={isEditStrategyModalOpen}
+          onOpenChange={setIsEditStrategyModalOpen}
+          strategy={selectedStrategy}
+          onSave={handleUpdateStrategy}
+        />
+      )}
     </div>
   );
 };
