@@ -1,5 +1,109 @@
-
 import { Trade, Strategy, DashboardStats, StrategyPerformance, TimeframePerformance, MarketPerformance } from './types';
+
+const defaultStrategies: Strategy[] = [
+  {
+    id: '1',
+    name: 'Breakout Strategy',
+    description: 'Trading breakouts of key support and resistance levels with confirmation.',
+    rules: [
+      'Wait for price to approach key level',
+      'Look for consolidation before breakout',
+      'Enter on breakout with volume confirmation',
+      'Place stop loss below/above the breakout level',
+      'Take profit at 2:1 risk-reward ratio minimum'
+    ],
+    entryConditions: [
+      'Price breaks above resistance or below support',
+      'Volume increases on breakout',
+      'Breakout occurs during favorable market hours',
+      'No major news events expected soon'
+    ],
+    exitConditions: [
+      'Price reaches take profit target',
+      'Price breaks back below/above breakout level',
+      'Momentum indicators show divergence',
+      'Time-based exit after 2 days if no clear direction'
+    ],
+    timeframes: ['1h', '4h', '1d'],
+    markets: ['Stocks', 'Forex', 'Crypto'],
+    riskRewardRatio: 2.5,
+    winRate: 62,
+    avgPnL: 1.85
+  },
+  {
+    id: '2',
+    name: 'Support Bounce',
+    description: 'Trading bounces off strong support levels in uptrends.',
+    rules: [
+      'Only trade in established uptrends',
+      'Wait for price to reach major support level',
+      'Look for bullish candlestick patterns',
+      'Confirm with increased volume',
+      'Risk no more than 1% per trade'
+    ],
+    entryConditions: [
+      'Price touches or slightly penetrates support',
+      'Bullish candlestick pattern forms',
+      'RSI shows oversold conditions',
+      'Volume increases on reversal day'
+    ],
+    exitConditions: [
+      'Price reaches previous swing high',
+      'RSI becomes overbought',
+      'Bearish candlestick pattern forms',
+      'Moving averages cross bearishly'
+    ],
+    timeframes: ['1h', '4h', '1d'],
+    markets: ['Stocks', 'ETFs'],
+    riskRewardRatio: 3.0,
+    winRate: 58,
+    avgPnL: 2.1
+  },
+  {
+    id: '3',
+    name: 'Technical Pattern',
+    description: 'Trading based on established chart patterns with high probability setups.',
+    rules: [
+      'Identify chart patterns (head & shoulders, double tops/bottoms, etc.)',
+      'Confirm pattern completion before entry',
+      'Enter on breakout of pattern boundary',
+      'Place stop loss at logical level based on pattern',
+      'Take profit based on pattern\'s measured move'
+    ],
+    entryConditions: [
+      'Pattern fully forms and confirms',
+      'Price breaks pattern boundary (neckline, resistance, etc.)',
+      'Volume confirms the breakout',
+      'Pattern occurs at significant price level'
+    ],
+    exitConditions: [
+      'Price reaches measured move target',
+      'Price action shows reversal signs',
+      'Time-based exit if trade stalls',
+      'Trailing stop after partial profit taking'
+    ],
+    timeframes: ['4h', '1d', '1w'],
+    markets: ['Stocks', 'Forex', 'Commodities', 'Crypto'],
+    riskRewardRatio: 2.0,
+    winRate: 65,
+    avgPnL: 1.7
+  }
+];
+
+// Helper function to get strategies from localStorage or use defaults
+export const getStoredStrategies = (): Strategy[] => {
+  const stored = localStorage.getItem('strategies');
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  localStorage.setItem('strategies', JSON.stringify(defaultStrategies));
+  return defaultStrategies;
+};
+
+// Helper function to save strategies to localStorage
+export const saveStrategies = (strategies: Strategy[]) => {
+  localStorage.setItem('strategies', JSON.stringify(strategies));
+};
 
 export const mockTrades: Trade[] = [
   {
@@ -97,96 +201,6 @@ export const mockTrades: Trade[] = [
     strategy: 'Technical Pattern',
     setupImage: 'https://i.imgur.com/YrGDXuO.png',
     chartTimeframe: '2h'
-  }
-];
-
-export const mockStrategies: Strategy[] = [
-  {
-    id: '1',
-    name: 'Breakout Strategy',
-    description: 'Trading breakouts of key support and resistance levels with confirmation.',
-    rules: [
-      'Wait for price to approach key level',
-      'Look for consolidation before breakout',
-      'Enter on breakout with volume confirmation',
-      'Place stop loss below/above the breakout level',
-      'Take profit at 2:1 risk-reward ratio minimum'
-    ],
-    entryConditions: [
-      'Price breaks above resistance or below support',
-      'Volume increases on breakout',
-      'Breakout occurs during favorable market hours',
-      'No major news events expected soon'
-    ],
-    exitConditions: [
-      'Price reaches take profit target',
-      'Price breaks back below/above breakout level',
-      'Momentum indicators show divergence',
-      'Time-based exit after 2 days if no clear direction'
-    ],
-    timeframes: ['1h', '4h', '1d'],
-    markets: ['Stocks', 'Forex', 'Crypto'],
-    riskRewardRatio: 2.5,
-    winRate: 62,
-    avgPnL: 1.85
-  },
-  {
-    id: '2',
-    name: 'Support Bounce',
-    description: 'Trading bounces off strong support levels in uptrends.',
-    rules: [
-      'Only trade in established uptrends',
-      'Wait for price to reach major support level',
-      'Look for bullish candlestick patterns',
-      'Confirm with increased volume',
-      'Risk no more than 1% per trade'
-    ],
-    entryConditions: [
-      'Price touches or slightly penetrates support',
-      'Bullish candlestick pattern forms',
-      'RSI shows oversold conditions',
-      'Volume increases on reversal day'
-    ],
-    exitConditions: [
-      'Price reaches previous swing high',
-      'RSI becomes overbought',
-      'Bearish candlestick pattern forms',
-      'Moving averages cross bearishly'
-    ],
-    timeframes: ['1h', '4h', '1d'],
-    markets: ['Stocks', 'ETFs'],
-    riskRewardRatio: 3.0,
-    winRate: 58,
-    avgPnL: 2.1
-  },
-  {
-    id: '3',
-    name: 'Technical Pattern',
-    description: 'Trading based on established chart patterns with high probability setups.',
-    rules: [
-      'Identify chart patterns (head & shoulders, double tops/bottoms, etc.)',
-      'Confirm pattern completion before entry',
-      'Enter on breakout of pattern boundary',
-      'Place stop loss at logical level based on pattern',
-      'Take profit based on pattern\'s measured move'
-    ],
-    entryConditions: [
-      'Pattern fully forms and confirms',
-      'Price breaks pattern boundary (neckline, resistance, etc.)',
-      'Volume confirms the breakout',
-      'Pattern occurs at significant price level'
-    ],
-    exitConditions: [
-      'Price reaches measured move target',
-      'Price action shows reversal signs',
-      'Time-based exit if trade stalls',
-      'Trailing stop after partial profit taking'
-    ],
-    timeframes: ['4h', '1d', '1w'],
-    markets: ['Stocks', 'Forex', 'Commodities', 'Crypto'],
-    riskRewardRatio: 2.0,
-    winRate: 65,
-    avgPnL: 1.7
   }
 ];
 

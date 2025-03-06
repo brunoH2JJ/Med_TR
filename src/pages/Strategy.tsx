@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   BarChart3, 
   Check, 
@@ -11,7 +11,7 @@ import {
   TrendingUp 
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
-import { mockStrategies, mockStrategyPerformance } from "@/lib/tradeData";
+import { getStoredStrategies, saveStrategies, mockStrategyPerformance } from "@/lib/tradeData";
 import { Strategy } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,10 +20,19 @@ import { StrategyFormModal } from "@/components/strategy/StrategyFormModal";
 import { toast } from "@/components/ui/use-toast";
 
 const StrategyPage = () => {
-  const [strategies, setStrategies] = useState<Strategy[]>(mockStrategies);
-  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(mockStrategies[0]);
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
   const [isNewStrategyModalOpen, setIsNewStrategyModalOpen] = useState(false);
   const [isEditStrategyModalOpen, setIsEditStrategyModalOpen] = useState(false);
+
+  // Load strategies from localStorage on mount
+  useEffect(() => {
+    const storedStrategies = getStoredStrategies();
+    setStrategies(storedStrategies);
+    if (storedStrategies.length > 0) {
+      setSelectedStrategy(storedStrategies[0]);
+    }
+  }, []);
 
   // Handle creating a new strategy
   const handleCreateStrategy = (newStrategyData: Partial<Strategy>) => {
@@ -37,11 +46,13 @@ const StrategyPage = () => {
       markets: newStrategyData.markets || [],
       timeframes: newStrategyData.timeframes || [],
       riskRewardRatio: newStrategyData.riskRewardRatio || 2,
-      winRate: 0, // Default for new strategies
+      winRate: 0,
     };
     
-    setStrategies((prev) => [...prev, newStrategy]);
+    const updatedStrategies = [...strategies, newStrategy];
+    setStrategies(updatedStrategies);
     setSelectedStrategy(newStrategy);
+    saveStrategies(updatedStrategies);
     
     toast({
       title: "Strategy Created",
@@ -58,13 +69,13 @@ const StrategyPage = () => {
       ...updatedStrategyData,
     };
     
-    setStrategies((prev) => 
-      prev.map((strategy) => 
-        strategy.id === selectedStrategy.id ? updatedStrategy : strategy
-      )
+    const updatedStrategies = strategies.map((strategy) => 
+      strategy.id === selectedStrategy.id ? updatedStrategy : strategy
     );
     
+    setStrategies(updatedStrategies);
     setSelectedStrategy(updatedStrategy);
+    saveStrategies(updatedStrategies);
     
     toast({
       title: "Strategy Updated",
