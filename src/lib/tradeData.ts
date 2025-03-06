@@ -1,5 +1,6 @@
 import { Trade, Strategy, DashboardStats, StrategyPerformance, TimeframePerformance, MarketPerformance } from './types';
 
+// Default data objects
 const defaultStrategies: Strategy[] = [
   {
     id: '1',
@@ -90,19 +91,32 @@ const defaultStrategies: Strategy[] = [
   }
 ];
 
-// Helper function to get strategies from localStorage or use defaults
-export const getStoredStrategies = (): Strategy[] => {
-  const stored = localStorage.getItem('strategies');
-  if (stored) {
-    return JSON.parse(stored);
+// Generic storage utility functions
+export const storeData = <T>(key: string, data: T): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (error) {
+    console.error(`Error storing ${key} data:`, error);
   }
-  localStorage.setItem('strategies', JSON.stringify(defaultStrategies));
-  return defaultStrategies;
 };
 
-// Helper function to save strategies to localStorage
-export const saveStrategies = (strategies: Strategy[]) => {
-  localStorage.setItem('strategies', JSON.stringify(strategies));
+export const retrieveData = <T>(key: string, defaultValue: T): T => {
+  try {
+    const storedData = localStorage.getItem(key);
+    return storedData ? JSON.parse(storedData) : defaultValue;
+  } catch (error) {
+    console.error(`Error retrieving ${key} data:`, error);
+    return defaultValue;
+  }
+};
+
+// Strategy-specific storage functions
+export const getStoredStrategies = (): Strategy[] => {
+  return retrieveData<Strategy[]>('strategies', defaultStrategies);
+};
+
+export const saveStrategies = (strategies: Strategy[]): void => {
+  storeData('strategies', strategies);
 };
 
 export const mockTrades: Trade[] = [
